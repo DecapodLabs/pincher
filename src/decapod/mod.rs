@@ -1,3 +1,4 @@
+pub mod agent;
 pub mod broker;
 pub mod capabilities;
 pub mod cli;
@@ -15,10 +16,8 @@ pub mod workunit;
 pub use anyhow::Error as DecapodError;
 pub use anyhow::Result;
 
-use cli::DecapodCli;
-use session::Session;
-use std::process::Stdio;
-use tokio::process::Command;
+pub use cli::DecapodCli;
+pub use session::Session;
 
 pub struct Decapod {
     cli: DecapodCli,
@@ -49,24 +48,6 @@ impl Decapod {
 
     pub fn session(&self) -> Option<&Session> {
         self.session.as_ref()
-    }
-}
-
-async fn run_decapod_command(args: &[&str]) -> Result<String> {
-    let output = Command::new("decapod")
-        .args(args)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .output()
-        .await?;
-
-    if output.status.success() {
-        Ok(String::from_utf8_lossy(&output.stdout).to_string())
-    } else {
-        Err(anyhow::anyhow!(
-            "decapod command failed: {}",
-            String::from_utf8_lossy(&output.stderr)
-        ))
     }
 }
 

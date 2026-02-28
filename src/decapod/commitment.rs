@@ -133,7 +133,7 @@ impl StateCommitmentManager {
         CommitmentEntry {
             entry_type: EntryType::Approval,
             key: format!("approval:{}", task_id),
-            value_hash: self.hash_value(&approver),
+            value_hash: self.hash_value(approver),
             metadata: {
                 let mut m = HashMap::new();
                 m.insert("approver".to_string(), serde_json::json!(approver));
@@ -212,10 +212,10 @@ impl StateCommitmentManager {
     }
 
     pub fn verify_chain(&self, commitment: &StateCommitment) -> bool {
-        if let Some(ref prev_id) = commitment.previous_commitment {
-            if Some(prev_id) != self.current_commitment_id.as_ref() {
-                return false;
-            }
+        if let Some(ref prev_id) = commitment.previous_commitment
+            && Some(prev_id) != self.current_commitment_id.as_ref()
+        {
+            return false;
         }
 
         let computed_hash = self.compute_state_hash(&commitment.commitments);

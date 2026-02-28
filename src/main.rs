@@ -1,6 +1,6 @@
 use anyhow::Result;
 use pincher::Decapod;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+use tracing_subscriber::{fmt, EnvFilter};
 
 #[tokio::main]
 async fn main() -> Result<()> {

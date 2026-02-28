@@ -77,10 +77,10 @@ impl Attestation {
     }
 
     pub fn has_expired(&self) -> bool {
-        if let Some(exp) = &self.expiration {
-            if let Ok(exp_time) = chrono::DateTime::parse_from_rfc3339(exp) {
-                return exp_time < chrono::Utc::now();
-            }
+        if let Some(exp) = &self.expiration
+            && let Ok(exp_time) = chrono::DateTime::parse_from_rfc3339(exp)
+        {
+            return exp_time < chrono::Utc::now();
         }
         false
     }
@@ -123,10 +123,10 @@ impl GovernanceResponse {
     pub fn get_blocking_reasons(&self) -> Vec<String> {
         let mut reasons = Vec::new();
 
-        if let Some(ref interlock) = self.interlock {
-            if interlock.blocking {
-                reasons.push(interlock.reason.clone());
-            }
+        if let Some(ref interlock) = self.interlock
+            && interlock.blocking
+        {
+            reasons.push(interlock.reason.clone());
         }
 
         reasons.extend(self.blocked_by.clone());
@@ -200,14 +200,14 @@ impl GovernanceEngine {
     ) -> Vec<ApprovalRequirement> {
         let mut requirements = Vec::new();
 
-        if let Some(ref interlock) = response.interlock {
-            if let Some(ref approval) = interlock.required_approval {
-                requirements.push(ApprovalRequirement {
-                    scope: interlock.approver_scope.clone(),
-                    reason: interlock.reason.clone(),
-                    approval_type: approval.clone(),
-                });
-            }
+        if let Some(ref interlock) = response.interlock
+            && let Some(ref approval) = interlock.required_approval
+        {
+            requirements.push(ApprovalRequirement {
+                scope: interlock.approver_scope.clone(),
+                reason: interlock.reason.clone(),
+                approval_type: approval.clone(),
+            });
         }
 
         requirements

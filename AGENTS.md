@@ -4,7 +4,11 @@ This is a Decapod-managed repository. **Strict Dependency: You are strictly boun
 
 This contract applies equally to Claude, Codex, Gemini, and any other agent operating here.
 
-## Mandatory Initialization
+## This Repository
+
+**Pincher** is the Rust agent engine library that integrates with Decapod. This is NOT a Decapod-managed project in the traditional sense - it's the **engine that powers agents** to work WITH Decapod.
+
+## For Agents Developing Pincher
 
 ```bash
 cargo install decapod
@@ -17,6 +21,41 @@ decapod rpc --op context.resolve
 decapod todo add "<task>"
 decapod todo claim --id <task-id>
 decapod workspace ensure
+```
+
+## For Agents Using Pincher (as a library)
+
+When building agent systems that use Pincher to integrate with Decapod:
+
+```rust
+use pincher::{
+    decapod::{
+        Session, RpcClient, Validator, TodoManager,
+        WorkspaceManager, WorkUnitManager, EventEmitter,
+    },
+    Result,
+};
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    // Acquire Decapod session
+    let session = Session::acquire(&password).await?;
+    
+    // Create RPC client
+    let rpc = RpcClient::new().with_session(session.token());
+    
+    // Initialize agent
+    rpc.agent_init("my-agent").await?;
+    
+    // Validate governance gates
+    let validation = Validator::new().run().await?;
+    
+    // Emit events
+    let emitter = EventEmitter::new("my-agent", "executor");
+    emitter.task_created(&task_id, "description");
+    
+    Ok(())
+}
 ```
 
 ## Control-Plane First Loop
@@ -45,6 +84,18 @@ decapod eval plan --task-set-id <id> --task-ref <task-id> --model-id <model> --p
 5. Never invent capabilities that are not exposed by the binary.
 6. Stop if requirements conflict, intent is ambiguous, or policy boundaries are unclear.
 7. Respect the Interface abstraction boundary.
+
+## Pincher Library Usage
+
+When modifying Pincher (the library):
+
+| Component | Test Command |
+|-----------|--------------|
+| Full build | `cargo build --all-features` |
+| Tests | `cargo test --all-features` |
+| Doc tests | `cargo test --doc` |
+| Examples | `cargo run --example agent_workflow` |
+| Clippy | `cargo clippy --all-features -- -D warnings` |
 
 ## Safety Invariants
 

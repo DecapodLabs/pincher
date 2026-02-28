@@ -208,7 +208,7 @@ impl WorkUnitManager {
         Err(anyhow::anyhow!("failed to request approval"))
     }
 
-    pub async fn record_proof(&self, workunit_id: &str, proof_type: &str, criteria: &str, evidence: HashMap<String, serde_json::Value>) -> anyhow::Result<WorkUnit> {
+    pub async fn record_proof(&self, workunit_id: &str, proof_type: &str, criteria: &str, _evidence: HashMap<String, serde_json::Value>) -> anyhow::Result<WorkUnit> {
         let args = vec!["workunit", "proof", "--id", workunit_id, "--type", proof_type, "--criteria", criteria];
         
         let output = self.run_command(&args).await?;

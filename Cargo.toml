@@ -4,6 +4,14 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.90"
 
+description = "A Rust-first agent engine that integrates pristinely with Decapod governance"
+readme = "README.md"
+license = "MIT"
+authors = ["Pincher Team"]
+repository = "https://github.com/DecapodLabs/pincher"
+keywords = ["agent", "ai", "decapod", "governance", "llm"]
+categories = ["artificial-intelligence", "development-tools"]
+
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
@@ -25,10 +33,25 @@ sha2 = "0.10"
 [dev-dependencies]
 tempfile = "3"
 
+[lib]
+name = "pincher"
+path = "src/lib.rs"
+
 [[bin]]
 name = "pincher"
 path = "src/main.rs"
 
-[lib]
-name = "pincher"
-path = "src/lib.rs"
+[features]
+default = ["full"]
+full = []
+minimal = []
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_qualifications = "deny"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

@@ -64,10 +64,10 @@ impl Session {
     }
 
     pub fn is_expired(&self) -> bool {
-        if let Some(expires_at) = &self.expires_at {
-            if let Ok(expires) = chrono::DateTime::parse_from_rfc3339(expires_at) {
-                return expires < chrono::Utc::now();
-            }
+        if let Some(expires_at) = &self.expires_at
+            && let Ok(expires) = chrono::DateTime::parse_from_rfc3339(expires_at)
+        {
+            return expires < chrono::Utc::now();
         }
         false
     }
@@ -116,14 +116,7 @@ impl Default for SessionConfig {
     }
 }
 
+#[allow(clippy::disallowed_methods)]
 pub fn get_session_password() -> Option<String> {
     std::env::var("DECAPOD_SESSION_PASSWORD").ok()
-}
-
-pub fn set_session_password(password: &str) {
-    unsafe { std::env::set_var("DECAPOD_SESSION_PASSWORD", password) };
-}
-
-pub fn clear_session_password() {
-    unsafe { std::env::remove_var("DECAPOD_SESSION_PASSWORD") };
 }

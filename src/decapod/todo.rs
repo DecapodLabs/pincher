@@ -15,20 +15,15 @@ pub struct Task {
     pub completed_at: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum TaskStatus {
+    #[default]
     Pending,
     Claimed,
     InProgress,
     Completed,
     Cancelled,
-}
-
-impl Default for TaskStatus {
-    fn default() -> Self {
-        TaskStatus::Pending
-    }
 }
 
 pub struct TodoManager {
