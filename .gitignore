@@ -1,0 +1,12 @@
+.decapod/data
+.decapod/data/*
+.decapod/.stfolder
+.decapod/workspaces
+.decapod/generated/*
+!.decapod/data/
+!.decapod/data/knowledge.promotions.jsonl
+!.decapod/generated/Dockerfile
+!.decapod/generated/context/
+!.decapod/generated/context/*.json
+!.decapod/generated/specs/
+!.decapod/generated/specs/*.md

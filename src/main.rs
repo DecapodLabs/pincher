@@ -1,0 +1,15 @@
+use anyhow::Result;
+use pincher::Decapod;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+
+    let decapod = Decapod::new()?;
+    decapod.run().await?;
+
+    Ok(())
+}

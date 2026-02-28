@@ -1,0 +1,18 @@
+schema_version = "1.0.0"
+
+[init]
+specs = true
+diagram_style = "ascii"
+entrypoints = [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "CODEX.md",
+]
+
+[repo]
+product_name = "pincher"
+product_summary = "Pincher exists to be the core agent engine that executes and coordinates agent work deterministically across TUI, webapp, and SaaS surfaces, while integrating with Decapod to enforce governance, approvals, and proof-backed quality inside explicitly allowed repos."
+architecture_direction = "Pincher is our Rust-first, highly optimized core agent engine delivered as an embeddable library/module. It is the execution spine that host processes (TUI, webapp, SaaS) integrate to run agent work with consistent behavior and guarantees across every surface. Pincher owns model API orchestration, tool/function calling, patch planning and application, typed state + event emission, deterministic request/retry/idempotency envelopes, and multi-agent concurrency (including spawning and coordinating sub-agents), with a clean backend/plugin architecture so transports and UIs stay thin. The outcome is a single, hardened runtime that turns “agent intent” into reproducible, testable execution—so every product surface ships the same engine, the same safety rails, and the same operational semantics."
+product_type = "service_or_library"
+done_criteria = "Pincher is “done” when a human can submit any supported request through any host surface (TUI, webapp, SaaS) and Pincher deterministically normalizes it into a Decapod-governed intent capsule that expands into an explicit TODO/work-unit graph with clear acceptance criteria, bounded scope, declared constraints, risk classification, required approvals, and named proof surfaces—persisted and addressable as the single source of truth—then executes that plan with multi-agent coordination that is conflict-aware and reproducible, using idempotent request envelopes, bounded retries, and a typed event stream where every model call, tool invocation, and filesystem change is routed as a proposal bound to a specific work unit and governing intent, every risky transition is halted until Decapod records the required approval, and no mutation is permitted unless it is both authorized by the plan and fully traceable, finally driving the plan to closure by running the required proofs, recording outcomes, satisfying Decapod’s promotion gates, and returning a final completion report that is auditable end-to-end—intent → plan → patches → approvals → proofs → promotion—with hard guarantees that nothing changed outside the Decapod-shaped plan and that the delivered result is verifiably compliant with what the human asked for."
