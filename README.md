@@ -1,133 +1,76 @@
 # Pincher
 
-A Rust-first agent engine that integrates pristinely with [Decapod](https://github.com/DecapodLabs/decapod) to enforce governance, approvals, and proof-backed quality inside explicitly allowed repos.
+Pincher is the Rust-first governed loop engine for Decapod-managed agent work. It prepares context, runs provider turns, coordinates work units, and records the custody and proof state that a host can render.
 
-## Overview
+Pincher is a library/runtime boundary. Amnion owns the human-facing terminal UI/UX; other hosts may consume the same engine contract. Pincher does not own screens, terminal layout, conversation presentation, or product interaction flow.
 
-Pincher is designed to be the core execution spine that host processes (TUI, webapp, SaaS) integrate to run agent work with consistent behavior and guarantees. It owns:
+## Ownership boundary
 
-- Model API orchestration
-- Tool/function calling
-- Patch planning and application
-- Typed state + event emission
-- Deterministic request/retry/idempotency envelopes
-- Multi-agent concurrency (spawning and coordinating sub-agents)
+| Concern | Owner |
+| --- | --- |
+| Intent preparation, context resolution, and governed execution | Pincher |
+| Provider/tool adapters and retry/idempotency behavior | Pincher |
+| Sessions, todos, workspaces, approvals, validation, and proof custody | Decapod, coordinated by Pincher |
+| Typed runtime events and execution state for hosts | Pincher |
+| Terminal cockpit, workspace view, conversation UI, status views, and human attention flow | [Amnion](https://github.com/DecapodLabs/amnion) |
+| Governance source of truth and promotion gates | Decapod |
 
-## Features
+## Execution model
 
-| Feature | Description |
-|---------|-------------|
-| **Session Management** | Acquire/validate Decapod sessions with token handling |
-| **RPC Client** | Full JSON-RPC interface to Decapod governance plane |
-| **Validation Gates** | Execute governance validation before operations |
-| **Task Management** | Full todo lifecycle (add, claim, complete, handoff) |
-| **Workspace Isolation** | Git worktree-based isolated workspaces |
-| **WorkUnit Governance** | Intent→Plan→Patches→Approvals→Proofs workflow |
-| **Governance Engine** | Interlock/Advisory/Attestation response handling |
-| **Event Emission** | Emit structured events to Decapod broker |
-| **Multi-Agent Coordination** | Delegate, coordinate, status updates between agents |
-| **State Commitment** | Cryptographic state commitment with proof surfaces |
-
-## Installation
-
-```bash
-cargo add pincher
+```text
+Host request
+    |
+    v
+Pincher loop engine
+    |-- resolve governed context
+    |-- prepare a provider turn
+    |-- propose tool/patch/work-unit work
+    |-- stop at Decapod approval interlocks
+    |-- emit typed state and events
+    |-- run validation and record proof
+    v
+Host rendering / handoff (Amnion)
 ```
 
-## Quick Start
+Each run stays bound to an explicit Decapod session, task/work unit, allowed workspace, and proof surface. Pincher may report `ready`, `blocked`, `failed`, or `handed_off`; it does not turn those states into UI policy.
+
+## Current library surfaces
+
+- `AgentEngine` prepares governed context and executes a provider turn.
+- `RpcClient`, `Session`, `TodoManager`, `WorkspaceManager`, and `WorkUnitManager` coordinate Decapod state.
+- `Event` and `EventEmitter` provide host-readable execution events.
+- `StateCommitmentManager` and proof types preserve evidence for handoff and promotion.
+
+The provider implementation and host transport remain explicit extension points. The current model call is a deterministic placeholder, so provider behavior is not represented as shipped capability yet.
+
+## Quick start
 
 ```rust,no_run
-use pincher::{
-    decapod::{Decapod, Session, RpcClient, Validator},
-    Result,
-};
+use pincher::{AgentEngine, Decapod, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Initialize Decapod connection
-    let decapod = Decapod::new()?;
-
-    // Acquire session (requires DECAPOD_SESSION_PASSWORD env var)
-    let session = Session::acquire("your-password").await?;
-
-    // Create RPC client with session
-    let rpc = RpcClient::new().with_session(session.token());
-
-    // Initialize agent
-    let response = rpc.agent_init("my-agent").await?;
-
-    // Run validation gates
-    let validation = Validator::new().run().await?;
-    if !validation.passed {
-        return Err(anyhow::anyhow!("validation failed"));
-    }
-
+    let _decapod = Decapod::new()?;
+    // Construct an AgentEngine, initialize it with a Decapod session,
+    // then expose its state/events to a host such as Amnion.
     Ok(())
 }
 ```
 
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Pincher                              │
-│  (Agent Engine - embedded library)                         │
-├─────────────────────────────────────────────────────────────┤
-│  CLI Wrapper  │  RPC Client  │  Governance  │  Coordination │
-├───────────────┴──────────────┴──────────────┴──────────────┤
-│                    Decapod Binary                          │
-│  (Governance Control Plane - invoked on-demand)            │
-├─────────────────────────────────────────────────────────────┤
-│  Sessions │ Validation │ Todos │ Workunits │ Workspaces    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Decapod Integration
-
-Pincher is designed specifically for Decapod-managed repositories. The integration follows the control-plane-first pattern:
+## Development
 
 ```bash
-# Initialize in a Decapod repo
+cargo fmt --check
+cargo test
+cargo clippy -- -D warnings
 decapod validate
-decapod docs ingest  
-decapod session acquire
-
-# Use Pincher to run agent work
-pincher run --agent-type coordinator
 ```
-
-## Governance Flow
-
-```
-User Intent
-    │
-    ▼
-Decapod Intent Capsule
-    │
-    ▼
-Pincher: Intent → Plan → Patches
-    │
-    ├──▶ Decapod: Validate (gate)
-    │         │
-    │         ▼
-    │    Interlock? ──▶ Request Approval
-    │
-    ▼
-Decapod: Proof Surfaces
-    │
-    ▼
-Promotion Gate
-```
-
-## Cargo Features
-
-Default features include full Decapod integration. Minimal feature set available for non-Decapod usage.
 
 ## Requirements
 
 - Rust 1.90+
-- Decapod binary installed (`cargo install decapod`)
-- Decapod-managed repository
+- A Decapod installation for governed repository operations
+- A Decapod-managed repository and an isolated workspace for mutations
 
 ## License
 

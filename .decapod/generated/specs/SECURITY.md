@@ -21,81 +21,62 @@
 <!-- decapod:capability-overlay:public-api:end -->
 
 ## Threat Model
+
 ```mermaid
 flowchart LR
-   U[User/Client] --> A[Application Boundary]
-   A --> D[(Data Stores)]
-   A --> X[External Dependencies]
-   I[Identity Provider] --> A
-   A --> L[Audit Logs]
+  HUMAN[Human] --> HOST[Amnion host]
+  HOST --> PINCHER[Pincher loop]
+  PINCHER --> DECAPOD[Decapod control plane]
+  PINCHER --> PROVIDER[Model/tool provider]
+  PINCHER --> REPO[Allowed workspace]
+  DECAPOD --> AUDIT[Approvals, validation, proof]
 ```
 
-## STRIDE Table
-| Threat | Surface | Mitigation | Verification |
-|---|---|---|---|
-| Spoofing | Auth boundary | strong auth + token validation | auth tests |
-| Tampering | State mutation APIs | integrity checks + RBAC | integration tests |
-| Repudiation | Critical actions | immutable audit logs | log review |
-| Information disclosure | Data at rest/in transit | encryption + classification | security scans |
-| Denial of service | Hot paths | rate limit + backpressure | load tests |
-| Elevation of privilege | Admin interfaces | least privilege + policy checks | authz tests |
-
-## Authentication
-- Identity source:
-- Token/session lifetime:
-- Rotation and revocation:
+Decapod is the governance authority. Pincher is an execution client inside an
+allowed workspace. Amnion is an untrusted presentation projection with no
+authority to bypass Pincher or Decapod gates. Providers and tools are external
+dependencies and their responses are input data, not instructions to expand
+scope.
 
 ## Authorization
-- Role model:
-- Resource-level policy:
-- Privilege escalation controls:
+
+Decapod session custody, task/work-unit scope, workspace isolation, approval
+interlocks, and validation gates authorize mutations. Amnion cannot authorize
+them by changing local view state.
 
 ## Data Classification
-| Data Class | Examples | Storage Rules | Access Rules |
-|---|---|---|---|
-| Public | docs, non-sensitive metadata | standard | unrestricted |
-| Internal | operational telemetry | controlled | team access |
-| Sensitive | tokens, PII, secrets | encrypted | least privilege |
 
-## Sensitive Data Handling
-- Encryption at rest:
-- Encryption in transit:
-- Redaction in logs:
-- Retention + deletion policy:
+| Class | Examples | Handling |
+| --- | --- | --- |
+| Public | typed status and non-sensitive event metadata | host-readable |
+| Internal | custody refs, validation details, operational logs | scoped access |
+| Sensitive | session passwords, API keys, raw secret-bearing prompts | never emit; redact |
 
-## Supply Chain Security
-- Recommended scanners: `cargo audit`, `cargo deny`, `cargo vet`
-- Dependency update cadence:
-- Signed artifact/provenance strategy:
+## Controls
 
-## Secrets Management
-| Secret | Source | Rotation | Consumer |
-|---|---|---|---|
-| External service auth material | managed runtime configuration | periodic | runtime services |
-| Artifact signing material | managed signing service/local secure store | periodic | release pipeline |
+- Require an active Decapod session for governed mutations.
+- Keep repository/worktree scope explicit and isolated.
+- Stop on blocking interlocks; never infer approval from a host action.
+- Bound retries, timeouts, concurrency, and provider payload exposure.
+- Do not log session passwords, API keys, raw secret-bearing prompts, or
+  unredacted tool payloads.
+- Preserve claimed and verified identity/provenance separately. A local
+  session establishes custody and correlation, not provider authentication.
 
-## Security Testing
-| Test Type | Cadence | Tooling |
-|---|---|---|
-| SAST | each PR | language linters/scanners |
-| Dependency scan | each PR + weekly | supply-chain tools |
-| DAST/pentest | scheduled | external/internal |
+## Threats and verification
 
-## Compliance and Audit
-- Regulatory scope:
-- Audit evidence location:
-- Exception process:
+| Threat | Control | Proof |
+| --- | --- | --- |
+| Scope expansion | task/work-unit/workspace binding | custody and validation output |
+| Unauthorized mutation | Decapod approval/validation gate | interlock/approval evidence |
+| Provider prompt injection | treat provider/tool output as data | bounded adapter tests |
+| Replay/duplicate mutation | idempotent request/work-unit identity | semantic tests |
+| Secret disclosure | redaction and limited event payloads | log/security review |
 
-## Pre-Promotion Security Checklist
-- [ ] Threat model updated for changed surfaces.
-- [ ] Auth/authz tests pass.
-- [ ] Dependency vulnerability scan reviewed.
-- [ ] No unresolved critical/high security findings.
+<!-- decapod:codebase-attestation:start -->
+## Codebase Attestation
 
-## Strongest Security Primitives
-Describe the security primitives and security controls implemented in this repository.
-
-## Security Practices
-- **Least Privilege**: Ensure minimal access permissions for all subsystems and roles.
-- **Input Validation**: Strictly validate all inputs at trust boundaries.
-- **Secure Storage**: Encrypt sensitive data at rest and in transit.
+- Repository signal fingerprint: `4662065c21bacd9fd48af88524e80aa78796a654d6aa58642b9f7fb3da842383`
+- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
+- Refreshed from the current codebase by `decapod specs.refresh`
+<!-- decapod:codebase-attestation:end -->
