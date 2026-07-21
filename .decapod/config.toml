@@ -13,10 +13,10 @@ entrypoints = [
 
 [repo]
 product_name = "pincher"
-product_summary = "Agent engine. The loop runner. It manages sessions, inference preparation, provider execution, custody, approvals, and runtime control. It ensures Decapod is consulted before inference and before mutation."
-architecture_direction = "library"
+product_summary = "Pincher is the governed Rust loop engine. It requires Decapod custody and governed context before inference, emits a versioned host contract, and requires authoritative Decapod validation and proof before readiness."
+architecture_direction = "Pincher is a Rust library/runtime. Amnion owns the soft terminal UI/UX; Pincher owns the governed inference and execution loop; Decapod owns authoritative repository custody, approvals, validation, proof, and promotion state."
 product_type = "service_or_library"
-done_criteria = "Done means Pincher provides a Rust-first agent engine that runs governed inference loops inside explicitly allowed repos, with Decapod consulted before context exposure, before agent execution, before repo mutation, and before completion is accepted. Pincher must manage agent/session lifecycle, provider invocation, repo/worktree custody, claimed todos, approval boundaries, context preparation, execution state, validation checkpoints, failure handling, and proof-backed handoff without owning the UI experience directly. A Pincher-managed run is complete only when the intent is bound to Decapod governance, the allowed scope is explicit, the agent operates through that boundary, required approvals are honored, validation has run, proof artifacts are recorded, and the final state can be rendered by Amnion as either ready, blocked, failed-with-cause, or safely handed off."
+done_criteria = "For governed-run contract v1, a host can construct a versioned RunRequest with explicit Decapod session, task, work-unit, repository, and isolated workspace references; the engine resolves authoritative custody and governed context before invoking a ProviderTurn; typed interlock, approval, failure, and event envelopes preserve the run outcome; and Ready is impossible without successful Decapod validation and proof evidence references. Amnion renders the resulting host contract, while Decapod remains the authority. Real providers, tools, patch application, transports, persistence, recovery, and promotion remain deferred until separately proven."
 base_branch = "main"
 primary_languages = ["Rust"]
 detected_surfaces = [
@@ -27,11 +27,7 @@ external_tracker = false
 container_workspaces = true
 mode = "local"
 declared_capabilities = [
-    "authentication",
-    "background-processing",
     "event-driven",
     "external-integrations",
-    "infrastructure-management",
-    "persistent-state",
     "public-api",
 ]

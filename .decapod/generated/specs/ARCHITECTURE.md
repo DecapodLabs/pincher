@@ -1,25 +1,4 @@
 # Architecture
-
-<!-- decapod:capability-overlay:persistent-state:start -->
-
-## Persistent State Architecture Overlay
-
-### State Ownership
-- Each entity type MUST have a designated state owner
-- State ownership boundaries MUST be explicitly documented
-- Cross-boundary state access MUST go through defined interfaces
-
-### Transaction Boundaries
-- All multi-entity mutations MUST occur within explicit transactions
-- Transaction boundaries MUST be documented in ARCHITECTURE.md
-- Compensating transactions for distributed operations
-
-### Storage Abstraction
-- Storage ownership, consistency behavior, and access boundaries MUST be explicit
-- Portability or swappable implementations are project decisions, not universal requirements
-- Migration and rollback treatment MUST match the selected storage technology
-<!-- decapod:capability-overlay:persistent-state:end -->
-
 ## Direction
 
 Rust library/runtime. Pincher is an embeddable loop engine, not a host
@@ -212,7 +191,7 @@ conflicts, and proof failures stop or hand off with their causes intact.
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `4662065c21bacd9fd48af88524e80aa78796a654d6aa58642b9f7fb3da842383`
-- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
+- Repository signal fingerprint: `9a5d7d51c64c895500d86c3b1bf40b14922d860d7043ed1094c7adf5ea2475fa`
+- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (19 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->

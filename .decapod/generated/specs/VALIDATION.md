@@ -16,47 +16,10 @@
 - No promotion from a protected branch or outside a Decapod workspace.
 - No completion claim while validation, approval, or proof is unresolved.
 - No interface change without a named producer, consumer, compatibility rule,
-  and migration/removal plan.
+  and migration/removal plan.## Evidence Artifacts
 
-<!-- decapod:capability-overlay:background-processing:start -->
-
-## Background Processing Validation Overlay
-
-### Duplicate Delivery Tests
-- Same message delivered multiple times MUST produce same result
-- Idempotency key verification
-- Verify the declared delivery guarantee; do not claim exactly-once behavior without proof
-
-### Retry Tests
-- Configured retry/backoff policy verified
-- Configured retry bound or unbounded policy verified
-- Poison-work handling verified when the project declares it
-
-### Shutdown Tests
-- Graceful drain on signal
-- In-flight job completion or safe requeue
-- No data loss on forced termination
-<!-- decapod:capability-overlay:background-processing:end -->
-
-<!-- decapod:capability-overlay:persistent-state:start -->
-
-## Persistent State Validation Overlay
-
-### Migration Proof Command
-- Configure `repo.migration_validation.command` and its arguments as the executable migration proof; file presence is not proof
-- The configured command MUST define its working directory, timeout, expected exit code, and evidence output
-
-### Migration Tests
-- All migrations MUST have integration tests
-- Rollback procedures MUST be tested
-- Data integrity checks post-migration
-
-### Persistence Integration Tests
-- Repository abstraction tested against real database
-- Transaction boundary tests
-- Concurrency conflict tests
-- Data integrity validation after recovery
-<!-- decapod:capability-overlay:persistent-state:end -->
+Record command output, Decapod validation epoch, task/work-unit identifiers,
+and proof artifact references in the governed handoff. Never retain secrets.
 
 <!-- decapod:capability-overlay:public-api:start -->
 
@@ -73,11 +36,6 @@
 - Rate limit enforcement tests
 - Token expiry/revocation tests
 <!-- decapod:capability-overlay:public-api:end -->
-
-## Evidence Artifacts
-
-Record command output, Decapod validation epoch, task/work-unit identifiers,
-and proof artifact references in the governed handoff. Never retain secrets.
 
 ## Regression Guardrails
 
@@ -101,7 +59,7 @@ feature completeness now.
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `4662065c21bacd9fd48af88524e80aa78796a654d6aa58642b9f7fb3da842383`
-- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
+- Repository signal fingerprint: `9a5d7d51c64c895500d86c3b1bf40b14922d860d7043ed1094c7adf5ea2475fa`
+- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (19 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->

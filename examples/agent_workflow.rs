@@ -5,7 +5,7 @@
 //! Run with: DECAPOD_SESSION_PASSWORD=your_password cargo run --example agent_workflow
 
 use pincher::decapod::{
-    broker::{EventEmitter, EventType},
+    broker::EventEmitter,
     capabilities::CapabilitiesManager,
     coordination::{CoordinationManager, AgentType},
     rpc::RpcClient,
