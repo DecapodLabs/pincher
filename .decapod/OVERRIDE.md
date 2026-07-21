@@ -5,132 +5,400 @@
 **Canonical:** OVERRIDE.md
 **Authority:** override
 **Layer:** Project
-**Binding:** Yes (overrides embedded constitution)
+**Binding:** Yes (overrides embedded constitution directives)
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!-- ⚠️  CHANGES ARE NOT PERMITTED ABOVE THIS LINE                           -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 
-## Core Overrides (Routers and Indices)
+Use this file to override specific constitution directives. Decapod indexes these sections
+using the H3 headers below (e.g., `### core/DECAPOD`). Overrides in this file take precedence
+over the embedded JSON constitution.
 
-### core/DECAPOD.md
+## CORE Overrides
 
-### core/INTERFACES.md
+### core/ARCHITECTURE
 
-### core/METHODOLOGY.md
+### core/DATA
 
-### core/PLUGINS.md
+### core/DECAPOD
 
-### core/GAPS.md
+### core/DEMANDS
 
-### core/DEMANDS.md
+### core/DEPRECATION
 
-### core/DEPRECATION.md
+### core/DOCS
+
+### core/EMERGENCY_PROTOCOL
+
+### core/ENGINEERING_EXCELLENCE
+
+### core/GAPS
+
+### core/INTERFACES
+
+### core/METADATA
+
+### core/METHODOLOGY
+
+### core/PLUGINS
+
+### core/RESEARCH
+
+### core/SCAFFOLDING
+
+### core/SPECS
 
 ---
 
-## Specs Overrides (System Contracts)
+## SPECS Overrides
+
+### specs/AMENDMENTS
+
+### specs/DB_BROKER_QUEUE
+
+### specs/GIT
+
+### specs/INTENT
+
+### specs/SECURITY
+
+### specs/SYSTEM
+
+### specs/engineering/FRONTEND_BACKEND_E2E
+
+### specs/evaluations/JUDGE_CONTRACT
+
+### specs/evaluations/VARIANCE_EVALS
+
+### specs/skills/SKILL_GOVERNANCE
+
+### specs/README.md
 
 ### specs/INTENT.md
 
-### specs/SYSTEM.md
+### specs/ARCHITECTURE.md
 
-### specs/AMENDMENTS.md
+### specs/INTERFACES.md
+
+### specs/VALIDATION.md
+
+### specs/SEMANTICS.md
+
+### specs/OPERATIONS.md
 
 ### specs/SECURITY.md
 
-### specs/GIT.md
+---
+
+## INTERFACES Overrides
+
+### interfaces/AGENT_CONTEXT_PACK
+
+### interfaces/ARCHITECTURE_FOUNDATIONS
+
+### interfaces/CLAIMS
+
+### interfaces/CONTROL_PLANE
+
+### interfaces/DEMANDS_SCHEMA
+
+### interfaces/DOC_RULES
+
+### interfaces/GLOSSARY
+
+### interfaces/INTERNALIZATION_SCHEMA
+
+### interfaces/KNOWLEDGE_SCHEMA
+
+### interfaces/KNOWLEDGE_STORE
+
+### interfaces/LCM
+
+### interfaces/MEMORY_INDEX
+
+### interfaces/MEMORY_SCHEMA
+
+### interfaces/PLAN_GOVERNED_EXECUTION
+
+### interfaces/PROCEDURAL_NORMS
+
+### interfaces/PROJECT_SPECS
+
+### interfaces/RISK_POLICY_GATE
+
+### interfaces/STORE_MODEL
+
+### interfaces/TESTING
+
+### interfaces/TODO_SCHEMA
+
+### interfaces/jsonschema/internalization/InternalizationAttachResult.schema
+
+### interfaces/jsonschema/internalization/InternalizationCreateResult.schema
+
+### interfaces/jsonschema/internalization/InternalizationDetachResult.schema
+
+### interfaces/jsonschema/internalization/InternalizationInspectResult.schema
+
+### interfaces/jsonschema/internalization/InternalizationManifest.schema
 
 ---
 
-## Interfaces Overrides (Binding Contracts)
+## METHODOLOGY Overrides
 
-### interfaces/CLAIMS.md
+### methodology/ARCHITECTURE
 
-### interfaces/CONTROL_PLANE.md
+### methodology/CI_CD
 
-### interfaces/DOC_RULES.md
+### methodology/ENGINEERING_MANAGEMENT
 
-### interfaces/GLOSSARY.md
+### methodology/EXECUTIVE_ALIGNMENT
 
-### interfaces/STORE_MODEL.md
+### methodology/INCIDENT_RESPONSE
+
+### methodology/KNOWLEDGE
+
+### methodology/MARKET_INTELLIGENCE
+
+### methodology/MEMORY
+
+### methodology/METRICS
+
+### methodology/OPERATING_MODEL_EXECUTION
+
+### methodology/OPERATIONS
+
+### methodology/PLATFORM
+
+### methodology/PRODUCT
+
+### methodology/QA
+
+### methodology/RELEASE_MANAGEMENT
+
+### methodology/RESEARCH
+
+### methodology/RESEARCH_PRODUCTION
+
+### methodology/SOUL
+
+### methodology/STRATEGIC_DECISION
+
+### methodology/STRATEGY_DIAGNOSIS
+
+### methodology/STRATEGY_ECONOMICS
+
+### methodology/TESTING
+
+### methodology/VALUE_RISK_GOVERNANCE
 
 ---
 
-## Methodology Overrides (Practice Guides)
+## ARCHITECTURE Overrides
 
-### methodology/ARCHITECTURE.md
+### architecture/ALGORITHMS
 
-### methodology/SOUL.md
+### architecture/API_DESIGN
 
-### methodology/KNOWLEDGE.md
+### architecture/AUTH
 
-### methodology/MEMORY.md
+### architecture/CI_CD_PIPELINES
+
+### architecture/CLOUD
+
+### architecture/CODING_STANDARDS
+
+### architecture/COMPLIANCE
+
+### architecture/CONCURRENCY
+
+### architecture/CONTAINERS
+
+### architecture/COST_OPTIMIZATION
+
+### architecture/DISTRIBUTED_SYSTEMS
+
+### architecture/DR
+
+### architecture/ENCRYPTION
+
+### architecture/ENTERPRISE
+
+### architecture/EVENT_DRIVEN
+
+### architecture/FRONTEND
+
+### architecture/GO
+
+### architecture/GRAPHQL
+
+### architecture/GRPC
+
+### architecture/INFRASTRUCTURE
+
+### architecture/JAVA
+
+### architecture/JAVASCRIPT
+
+### architecture/KNOWLEDGE_BASE
+
+### architecture/KUBERNETES
+
+### architecture/MEMORY
+
+### architecture/MESSAGING
+
+### architecture/METRICS
+
+### architecture/MICROSERVICES
+
+### architecture/NETWORKING
+
+### architecture/OBSERVABILITY
+
+### architecture/PERFORMANCE
+
+### architecture/PYTHON
+
+### architecture/REACT
+
+### architecture/RUBY
+
+### architecture/RUST
+
+### architecture/SCALING
+
+### architecture/SECRETS
+
+### architecture/SECURITY
+
+### architecture/SYSTEMS_DESIGN
+
+### architecture/TERRAFORM
+
+### architecture/TESTING_STRATEGY
+
+### architecture/UI
+
+### architecture/WEB
 
 ---
 
-## Architecture Overrides (Domain Patterns)
+## DATA Overrides
 
-### architecture/DATA.md
+### data/CACHING
 
-### architecture/CACHING.md
+### data/DATABASE
 
-### architecture/MEMORY.md
+### data/DATA_ENGINEERING
 
-### architecture/WEB.md
+### data/PIPELINES
 
-### architecture/CLOUD.md
-
-### architecture/FRONTEND.md
-
-### architecture/ALGORITHMS.md
-
-### architecture/SECURITY.md
-
-### architecture/OBSERVABILITY.md
-
-### architecture/CONCURRENCY.md
+### data/POSTGRESQL
 
 ---
 
-## Plugins Overrides (Operational Subsystems)
+## PLUGINS Overrides
 
-### plugins/TODO.md
+### plugins/APTITUDE
 
-### plugins/MANIFEST.md
+### plugins/ARCHIVE
 
-### plugins/EMERGENCY_PROTOCOL.md
+### plugins/AUDIT
 
-### plugins/DB_BROKER.md
+### plugins/AUTOUPDATE
 
-### plugins/CRON.md
+### plugins/CONTAINER
 
-### plugins/REFLEX.md
+### plugins/CONTEXT
 
-### plugins/HEALTH.md
+### plugins/CRON
 
-### plugins/POLICY.md
+### plugins/DB_BROKER
 
-### plugins/WATCHER.md
+### plugins/DECIDE
 
-### plugins/KNOWLEDGE.md
+### plugins/EMERGENCY_PROTOCOL
 
-### plugins/ARCHIVE.md
+### plugins/FEDERATION
 
-### plugins/FEDERATION.md
+### plugins/FEEDBACK
 
-### plugins/FEEDBACK.md
+### plugins/HEALTH
 
-### plugins/TRUST.md
+### plugins/HEARTBEAT
 
-### plugins/CONTEXT.md
+### plugins/KNOWLEDGE
 
-### plugins/HEARTBEAT.md
+### plugins/MANIFEST
 
-### plugins/APTITUDE.md
+### plugins/POLICY
 
-### plugins/VERIFY.md
+### plugins/REFLEX
 
-### plugins/DECIDE.md
+### plugins/TODO
 
-### plugins/AUTOUPDATE.md
+### plugins/TRUST
+
+### plugins/VERIFY
+
+### plugins/WATCHER
+
+---
+
+## DOCS Overrides
+
+### docs/ARCHITECTURE_OVERVIEW
+
+### docs/CONTROL_PLANE_API
+
+### docs/EVAL_TRANSLATION_MAP
+
+### docs/GOVERNANCE_AUDIT
+
+### docs/MAINTAINERS
+
+### docs/MIGRATIONS
+
+### docs/NEGLECTED_ASPECTS_LEDGER
+
+### docs/PLAYBOOK
+
+### docs/README
+
+### docs/RELEASE_PROCESS
+
+### docs/SECURITY_THREAT_MODEL
+
+### docs/SKILL_TRANSLATION_MAP
+
+### docs/agent/README.md
+
+### docs/agent/api-index.md
+
+### docs/agent/command-contracts.md
+
+### docs/agent/config-schema.md
+
+### docs/agent/error-recovery.md
+
+### docs/agent/mcp.md
+
+### docs/agent/payload-examples.md
+
+### docs/agent/state-model.md
+
+---
+
+## METADATA Overrides
+
+### metadata/skills/AGENT_DECAPOD_INTERFACE
+
+### metadata/skills/BUNDLE
+
+### metadata/skills/HUMAN_AGENT_UX
+
+### metadata/skills/INTENT_REFINEMENT
+
+---
