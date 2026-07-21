@@ -1,21 +1,76 @@
 # Intent
 
+<!-- decapod:declared-capabilities:start -->
+
+## Declared Capability Surfaces
+
+- `authentication`
+- `background-processing`
+- `event-driven`
+- `external-integrations`
+- `infrastructure-management`
+- `persistent-state`
+- `public-api`
+
+<!-- decapod:declared-capabilities:end -->
 ## Product Outcome
-- Pincher exists to be the core agent engine that executes and coordinates agent work deterministically across TUI, webapp, and SaaS surfaces, while integrating with Decapod to enforce governance, approvals, and proof-backed quality inside explicitly allowed repos.
+
+Pincher is the Rust-first governed loop engine for agent work in explicitly
+allowed repositories. It prepares Decapod-governed context, runs provider
+turns, coordinates work units, stops at approval interlocks, emits typed
+runtime state/events, and records proof-backed handoff state.
 
 ## Scope
-- In scope for pincher:
-- Out of scope:
+
+| Area | Pincher owns | Source of truth |
+| --- | --- | --- |
+| Execution | Loop lifecycle, provider turn orchestration, retries, cancellation, and coordination | Pincher runtime |
+| Governance integration | Context resolution, sessions, todos, workspaces, work units, approvals, validation, and proofs through Decapod | Decapod |
+| Host contract | Typed state and event output suitable for a host renderer | Pincher interfaces |
+| Presentation | Terminal layout, conversation UX, status views, and human-attention policy | Amnion |
+
+## Explicit non-goals
+
+- Pincher does not implement a TUI, webapp, SaaS screen, or conversation
+  presentation layer.
+- Pincher does not replace Decapod's durable state, approval records, or
+  promotion gates with a parallel store.
+- Pincher does not claim provider or human identity from environment values;
+  local Decapod session custody is not provider authentication.
 
 ## Constraints
-- Technical:
-- Operational:
-- Security/compliance:
+
+- Rust-first library/runtime with no UI ownership.
+- Mutations require Decapod session, task/work-unit scope, and isolated workspace custody.
+- Decapod remains the authority for approvals, durable state, validation, and promotion.
 
 ## Acceptance Criteria
-- [ ] Pincher is “done” when a human can submit any supported request through any host surface (TUI, webapp, SaaS) and Pincher deterministically normalizes it into a Decapod-governed intent capsule that expands into an explicit TODO/work-unit graph with clear acceptance criteria, bounded scope, declared constraints, risk classification, required approvals, and named proof surfaces—persisted and addressable as the single source of truth—then executes that plan with multi-agent coordination that is conflict-aware and reproducible, using idempotent request envelopes, bounded retries, and a typed event stream where every model call, tool invocation, and filesystem change is routed as a proposal bound to a specific work unit and governing intent, every risky transition is halted until Decapod records the required approval, and no mutation is permitted unless it is both authorized by the plan and fully traceable, finally driving the plan to closure by running the required proofs, recording outcomes, satisfying Decapod’s promotion gates, and returning a final completion report that is auditable end-to-end—intent → plan → patches → approvals → proofs → promotion—with hard guarantees that nothing changed outside the Decapod-shaped plan and that the delivered result is verifiably compliant with what the human asked for.
-- [ ] Non-functional targets are met (latency, reliability, cost, etc.).
-- [ ] Validation gates pass and artifacts are attached.
 
-## Open Questions
-- List unresolved decisions that block implementation confidence.
+- [ ] A host can start a governed run without importing UI policy into Pincher.
+- [ ] Context exposure and execution are bound to a Decapod session and
+      explicit task/work-unit/workspace scope.
+- [ ] Blocking interlocks stop execution until the required Decapod approval is
+      present.
+- [ ] Runtime state and events identify the run, session, task/work unit, and
+      current lifecycle state so Amnion can render them.
+- [ ] Completion requires validation and named proof evidence; failures retain
+      their cause for handoff.
+- [ ] `cargo fmt --check`, `cargo test`, `cargo clippy -- -D warnings`, and
+      `decapod validate` are recorded as proof surfaces.
+
+## Assumptions and deferred decisions
+
+- The first host is Amnion, but the host contract remains reusable.
+- Provider and tool adapters are extension points; the current model call is a
+  deterministic placeholder rather than a shipped provider implementation.
+- The exact versioned host transport is deferred until a concrete Amnion
+  consumer exists; current Rust types and serialized events are the evidence
+  surface.
+
+<!-- decapod:codebase-attestation:start -->
+## Codebase Attestation
+
+- Repository signal fingerprint: `4662065c21bacd9fd48af88524e80aa78796a654d6aa58642b9f7fb3da842383`
+- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
+- Refreshed from the current codebase by `decapod specs.refresh`
+<!-- decapod:codebase-attestation:end -->

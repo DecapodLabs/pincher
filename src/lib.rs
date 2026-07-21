@@ -1,21 +1,24 @@
-//! Pincher - The Decapod-native agent engine
+//! Pincher - The Decapod-native governed loop engine
 //!
-//! Pincher is a Rust-first agent engine that integrates pristinely with Decapod
-//! to enforce governance, approvals, and proof-backed quality inside explicitly
-//! allowed repos.
+//! Pincher is a Rust-first loop engine that integrates with Decapod to enforce
+//! governed context exposure, approvals, workspace custody, and proof-backed
+//! quality inside explicitly allowed repos.
+//!
+//! Pincher owns execution state and typed events. A host such as Amnion owns
+//! presentation and human interaction; Pincher does not contain UI policy.
 //!
 //! ## Key Features
 //!
 //! - **Session Management** - Acquire/validate Decapod sessions with token handling
-//! - **RPC Client** - Full JSON-RPC interface to Decapod governance plane
-//! - **Validation Gates** - Execute governance validation before operations
-//! - **Task Management** - Full todo lifecycle (add, claim, complete, handoff)
-//! - **Workspace Isolation** - Git worktree-based isolated workspaces
-//! - **WorkUnit Governance** - Intent→Plan→Patches→Approvals→Proofs workflow
-//! - **Governance Engine** - Interlock/Advisory/Attestation response handling
-//! - **Event Emission** - Emit structured events to Decapod broker
-//! - **Multi-Agent Coordination** - Delegate, coordinate, status updates between agents
-//! - **State Commitment** - Cryptographic state commitment with proof surfaces
+//! - **Governed loop execution** - Prepare context, execute a turn, and stop at
+//!   approval or proof boundaries.
+//! - **Decapod coordination** - Sessions, todos, workspaces, work units, and
+//!   validation remain delegated to the Decapod control plane.
+//! - **Typed runtime events** - Hosts can render state without owning engine
+//!   semantics.
+//! - **Multi-agent coordination** - Delegate and coordinate work units without
+//!   coupling the engine to a particular UI.
+//! - **State commitment** - Preserve evidence and proof surfaces for handoff.
 //!
 //! ## Quick Start
 //!

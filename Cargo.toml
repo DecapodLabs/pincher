@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.90"
 
-description = "A Rust-first agent engine that integrates pristinely with Decapod governance"
+description = "A Rust-first governed loop engine for Decapod-managed agent work"
 readme = "README.md"
 license = "MIT"
 authors = ["Pincher Team"]

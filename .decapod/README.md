@@ -1,60 +1,77 @@
-# .decapod - Decapod Project Metadata 🦀✨
+# .decapod - Decapod Control Plane
 
-Welcome to the control-plane directory for this repo.
+Decapod is the daemonless, local-first governance kernel behind AI coding agents. Agents call it on demand to turn intent into context, then context into explicit specifications before inference, enforce boundaries, and deliver proof-backed completion across concurrent multi-agent work.
+
+GitHub: https://github.com/DecapodLabs/decapod
+Canonical Contract: `assets/constitution.json` section `core/DECAPOD`
+
+## What This Directory Is
+
+This `.decapod/` directory is the local control plane for this repository.
+It keeps Decapod-owned state, generated artifacts, and isolated workspaces separate from your product source tree.
+
+`OVERRIDE.md` and `README.md` intentionally stay at this top level.
 
 ## Quick Start
 
-1. **Initialize**: Run `decapod init` to set up your project
-2. **Configure overrides**: Edit `.decapod/OVERRIDE.md` to customize behavior
-3. **Read docs**: Use `decapod docs show <path>` to read constitution docs
+1. `decapod init --proof`
+2. `decapod validate`
+3. `decapod constitution get core/DECAPOD`
+4. `decapod session acquire`
+5. `decapod rpc --op agent.init`
+6. `decapod workspace status`
+7. `decapod todo add \"<task>\" && decapod todo claim --id <task-id>`
+8. `decapod workspace ensure`
 
-## Summary
+## Migrating Custom Agent Files
 
-The `.decapod/OVERRIDES.md` file is your project-local override layer for Decapod's embedded constitution.
+If you have existing files like `SOUL.md` or `MEMORY.md` that were used for agent instructions, you can migrate them into the Decapod governance layer.
 
-The embedded constitution (shipped with Decapod) is read-only baseline policy.
-`.decapod/OVERRIDE.md` is where you add project-specific behavior without forking Decapod.
+After running `decapod init`, simply ask your agent to **"consolidate my [FILE.md] content into the .decapod/OVERRIDE.md substrate"**. This ensures your project-specific intent is merged into the correct constitutional sections while allowing Decapod to manage the primary entrypoints.
 
-Keep overrides in the correct section, minimal and explicit.
+## Aptitude Memory
 
-## How to Use Overrides
+Decapod aptitude remains for preferences and behavior recall:
 
-The embedded constitution (read-only, shipped with Decapod) provides the base methodology. The `.decapod/OVERRIDE.md` file lets you customize behavior without forking Decapod.
+```bash
+# Record a preference
+decapod data aptitude add --category git --key branch_prefix --value "feature/" --confidence 90
 
-**To add an override:**
+# Get contextual prompts
+decapod data aptitude prompt --query "commit"
 
-1. Find the component section in `OVERRIDE.md` (Core, Specs, Interfaces, Methodology, Architecture, or Plugins)
-2. Scroll to the specific component you want to override (e.g., `### plugins/TODO.md`)
-3. Write your override content under that heading
-4. Use markdown formatting for your overrides
-5. Commit this file to version control
-
-**Example override:**
-
-```markdown
-### plugins/TODO.md
-
-## Priority Levels (Project Override)
-
-For this project, we use a 5-level priority system:
-- **critical**: Production down, blocking release
-- **high**: Sprint commitment, must complete this iteration
-- **medium**: Backlog, next sprint candidate
-- **low**: Nice-to-have, future consideration
-- **idea**: Exploration, needs refinement before actionable
+# Record an observation
+decapod data aptitude observe --category code_style --content "Team prefers async/await over tokio::spawn"
 ```
 
-## Available Override Sections
+## Canonical Layout
 
-- **Core**: DECAPOD.md, INTERFACES.md, METHODOLOGY.md, PLUGINS.md, GAPS.md, DEMANDS.md, DEPRECATION.md
-- **Specs**: INTENT.md, SYSTEM.md, AMENDMENTS.md, SECURITY.md, GIT.md
-- **Interfaces**: CLAIMS.md, CONTROL_PLANE.md, DOC_RULES.md, GLOSSARY.md, STORE_MODEL.md
-- **Methodology**: ARCHITECTURE.md, SOUL.md, KNOWLEDGE.md, MEMORY.md
-- **Architecture**: DATA.md, CACHING.md, MEMORY.md, WEB.md, CLOUD.md, FRONTEND.md, ALGORITHMS.md, SECURITY.md, OBSERVABILITY.md, CONCURRENCY.md
-- **Plugins**: TODO.md, MANIFEST.md, EMERGENCY_PROTOCOL.md, DB_BROKER.md, CRON.md, REFLEX.md, HEALTH.md, POLICY.md, WATCHER.md, KNOWLEDGE.md, ARCHIVE.md, FEDERATION.md, FEEDBACK.md, TRUST.md, CONTEXT.md, HEARTBEAT.md, APTITUDE.md, VERIFY.md, DECIDE.md, AUTOUPDATE.md
+- `README.md`: operator onboarding and control-plane map.
+- `OVERRIDE.md`: project-local override layer for embedded constitution directives.
+- `data/`: canonical control-plane state (SQLite + ledgers).
+- `generated/specs/`: living project specs scaffolded by `decapod init`.
+- `generated/context/`: deterministic context capsule artifacts.
+- `generated/artifacts/provenance/`: promotion manifests and convergence checklist.
+- `generated/artifacts/inventory/`: deterministic release inventory artifacts.
+- `generated/artifacts/diagnostics/`: opt-in diagnostics artifacts.
+- `workspaces/`: isolated todo-scoped git worktrees for implementation.
 
-## Contents
+## How It Works
 
-- `OVERRIDE.md`: **Edit this file** to override the embedded decapod constitution for project-specific needs.
-- `data/`: **DO NOT TOUCH**. This is persistent storage (SQLite databases and event logs) used by your agent(s) and decapod.
-- `generated/`: **DO NOT TOUCH**. Artifacts generated by decapod.
+Decapod uses a **JSON-based constitution** to govern agent behavior. Instead of the agent reading full Markdown documents, it uses the Decapod CLI to query specific directives.
+
+1. **Indexing**: Decapod indexes the constitution graph when called.
+2. **Selective Context**: Agents query exact sections (directives) needed for the current task, minimizing context overhead.
+3. **Local Overrides**: You can override any constitution directive in [.decapod/OVERRIDE.md](OVERRIDE.md) using the specific directive ID.
+
+## Why Teams Use This
+
+- Agent-first interface with explicit governance.
+- Local-first execution without daemon overhead.
+- Integrated TODO, claims, context, validation, and proof in one harness.
+- Cleaner repos: Decapod concerns stay in `.decapod/`.
+
+## Override Workflow
+
+Edit `.decapod/OVERRIDE.md` to add project-specific policy overlays without forking Decapod.
+Keep overrides minimal, explicit, and committed.
