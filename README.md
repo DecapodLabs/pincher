@@ -1,61 +1,93 @@
 # Pincher
 
-Pincher is the Rust-first governed loop engine for Decapod-managed agent work. It prepares context, runs provider turns, coordinates work units, and records the custody and proof state that a host can render.
+Pincher is a Rust library/runtime for one Decapod-governed inference and
+execution loop. It is not a TUI, chat application, provider launcher, or
+governance store.
 
-Pincher is a library/runtime boundary. Amnion owns the human-facing terminal UI/UX; other hosts may consume the same engine contract. Pincher does not own screens, terminal layout, conversation presentation, or product interaction flow.
+The ownership boundary is deliberate:
 
-## Ownership boundary
-
-| Concern | Owner |
+| System | Owns |
 | --- | --- |
-| Intent preparation, context resolution, and governed execution | Pincher |
-| Provider/tool adapters and retry/idempotency behavior | Pincher |
-| Sessions, todos, workspaces, approvals, validation, and proof custody | Decapod, coordinated by Pincher |
-| Typed runtime events and execution state for hosts | Pincher |
-| Terminal cockpit, workspace view, conversation UI, status views, and human attention flow | [Amnion](https://github.com/DecapodLabs/amnion) |
-| Governance source of truth and promotion gates | Decapod |
+| Amnion | Soft terminal UI/UX and host presentation |
+| Pincher | Governed run sequencing, provider port, typed state, and host events |
+| Decapod | Authoritative custody, context, approvals, validation, proof, and promotion |
 
-## Execution model
+## Governed-run v1
+
+The public contract is `pincher.governed-run` version `1.0.0`. A host submits a
+`RunRequest` containing stable run, intent, correlation, idempotency, and
+explicit Decapod custody references. The `GovernedRunEngine` accepts a provider
+turn only after the control-plane port has confirmed all of these references:
 
 ```text
-Host request
-    |
-    v
-Pincher loop engine
-    |-- resolve governed context
-    |-- prepare a provider turn
-    |-- propose tool/patch/work-unit work
-    |-- stop at Decapod approval interlocks
-    |-- emit typed state and events
-    |-- run validation and record proof
-    v
-Host rendering / handoff (Amnion)
+Prepared
+  -> Decapod custody
+  -> Decapod context resolution
+  -> interlock and approval decision
+  -> ContextResolved
+  -> Executing / provider proposal
+  -> Verifying
+  -> authoritative validation
+  -> authoritative proof evidence
+  -> Ready
 ```
 
-Each run stays bound to an explicit Decapod session, task/work unit, allowed workspace, and proof surface. Pincher may report `ready`, `blocked`, `failed`, or `handed_off`; it does not turn those states into UI policy.
+No provider output, local hash, host action, process exit, or Pincher event can
+create approval, validation, proof, or readiness. `Ready` requires both a
+successful Decapod validation evidence reference and a successful Decapod proof
+evidence reference. Interlocks and pending/denied approvals produce a typed
+`Blocked` outcome; custody, provider, validation, and proof failures produce a
+typed `Failed` outcome with remediation information. Either terminal outcome
+can be handed off without erasing its evidence.
 
-## Current library surfaces
+### Minimal host request
 
-- `AgentEngine` prepares governed context and executes a provider turn.
-- `RpcClient`, `Session`, `TodoManager`, `WorkspaceManager`, and `WorkUnitManager` coordinate Decapod state.
-- `Event` and `EventEmitter` provide host-readable execution events.
-- `StateCommitmentManager` and proof types preserve evidence for handoff and promotion.
+The request is serializable and contains references rather than credentials or
+raw resolved context:
 
-The provider implementation and host transport remain explicit extension points. The current model call is a deterministic placeholder, so provider behavior is not represented as shipped capability yet.
+```rust
+use pincher::governed_run::{
+    CorrelationId, CustodyBinding, IdempotencyKey, IntentId, RepositoryRef, RunId,
+    RunRequest, SessionRef, TaskRef, WorkUnitRef, WorkspaceRef,
+};
 
-## Quick start
-
-```rust,no_run
-use pincher::{AgentEngine, Decapod, Result};
-
-#[tokio::main]
-async fn main() -> Result<()> {
-    let _decapod = Decapod::new()?;
-    // Construct an AgentEngine, initialize it with a Decapod session,
-    // then expose its state/events to a host such as Amnion.
-    Ok(())
-}
+let request = RunRequest::v1(
+    RunId::new("run-1")?,
+    IntentId::new("intent-1")?,
+    CorrelationId::new("correlation-1")?,
+    IdempotencyKey::new("idempotency-1")?,
+    CustodyBinding::complete(
+        SessionRef::new("session-1")?,
+        TaskRef::new("task-1")?,
+        WorkUnitRef::new("work-unit-1")?,
+        RepositoryRef::new("repository-1")?,
+        WorkspaceRef::new("workspace-1")?,
+    ),
+);
 ```
+
+`GovernedRunEngine<C, P, S>` takes three explicit ports:
+
+- `DecapodControlPlane` returns custody, context, interlock/approval, validation,
+  and proof evidence from Decapod.
+- `ProviderTurn` receives only `GovernedInferenceRequest`, which already
+  contains successful custody and context evidence.
+- `EventSink` receives versioned envelopes with stable sequence numbers. The
+  core never prints events to stdout; `InMemoryEventSink` is provided for
+  deterministic tests.
+
+The checked-in `tests/governed_run_contract.rs` supplies deterministic fake
+ports and proves the happy, blocked, and failed paths without credentials or a
+live provider. The current concrete Decapod CLI/RPC adapter remains explicitly
+unsupported until its actual structured envelopes are proven in the adapter
+conformance follow-up issue.
+
+## Deferred from v1
+
+This slice does not claim a real model provider, tool execution, patch
+application, multi-turn autonomy, multi-agent delegation, transport/daemon
+support, Pincher-owned governance persistence, recovery/replay, metrics, or
+promotion/merge behavior. Those boundaries are tracked as follow-up issues.
 
 ## Development
 
@@ -63,14 +95,13 @@ async fn main() -> Result<()> {
 cargo fmt --check
 cargo test
 cargo clippy -- -D warnings
+decapod validate --refresh-specs
 decapod validate
 ```
 
-## Requirements
-
-- Rust 1.90+
-- A Decapod installation for governed repository operations
-- A Decapod-managed repository and an isolated workspace for mutations
+The repository is Decapod-managed. Implementations must run inside a claimed
+isolated Decapod workspace, and generated specs must be refreshed through
+Decapod rather than edited directly.
 
 ## License
 

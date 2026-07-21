@@ -39,8 +39,14 @@ pub struct ProofSurface {
     pub proof_type: ProofType,
     pub criteria: String,
     pub evidence: HashMap<String, serde_json::Value>,
-    pub verified: bool,
-    pub verified_at: Option<String>,
+    /// Local integrity state only.  Decapod owns authoritative proof truth.
+    pub verification: ProofVerification,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum ProofVerification {
+    Proposed,
+    LocallyIntegrityChecked,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -176,15 +182,14 @@ impl StateCommitmentManager {
             proof_type,
             criteria: criteria.to_string(),
             evidence,
-            verified: false,
-            verified_at: None,
+            verification: ProofVerification::Proposed,
         }
     }
 
-    pub fn verify_proof(&mut self, proof: &mut ProofSurface) -> bool {
-        proof.verified = true;
-        proof.verified_at = Some(chrono::Utc::now().to_rfc3339());
-        proof.verified
+    /// Records only a local integrity check; it cannot create Decapod proof
+    /// evidence, approval, validation, or promotion authority.
+    pub fn mark_locally_integrity_checked(&self, proof: &mut ProofSurface) {
+        proof.verification = ProofVerification::LocallyIntegrityChecked;
     }
 
     fn compute_state_hash(&self, entries: &[CommitmentEntry]) -> String {

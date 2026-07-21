@@ -92,10 +92,12 @@ impl Event {
         self
     }
 
+    /// Serialize an event for an adapter.  Core events are never written to
+    /// stdout; hosts choose an explicit sink such as the versioned governed-run
+    /// [`crate::governed_run::EventSink`].
+    #[deprecated(note = "use governed_run::EventSink for host-facing events")]
     pub fn emit(&self) -> anyhow::Result<String> {
-        let json = serde_json::to_string(self)?;
-        println!("{}", json);
-        Ok(json)
+        Ok(serde_json::to_string(self)?)
     }
 }
 
