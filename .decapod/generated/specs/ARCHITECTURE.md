@@ -30,6 +30,29 @@ application.
 Pincher is the governed execution spine for hosts such as Amnion. It owns the
 loop and custody boundary while keeping presentation outside the crate.
 
+## Current Facts
+
+- Runtime/language: Rust.
+- Surfaces: Cargo library and Decapod integration.
+- Product type: service_or_library.
+
+## Architecture Map
+
+- `src/`: Pincher loop and Decapod integration modules.
+- `README.md`: host boundary and development contract.
+- `.decapod/generated/specs/`: living governance/spec contracts.
+
+## Data Flows
+
+Host intent enters Pincher, governed context is resolved through Decapod, a
+provider turn produces bounded proposals/events, and validation/proof state is
+returned to the host.
+
+## Strongest Existing Primitives
+
+`AgentEngine`, `RpcClient`, `EventEmitter`, work-unit managers, and commitment
+types are the current reusable engine primitives.
+
 ## Runtime and Deployment Matrix
 
 - Runtime: Rust library embedded by a foreground host.
@@ -63,7 +86,16 @@ flowchart LR
 - Coordination and commitment: multi-agent coordination, event emission, and
   proof/state commitment for host handoff.
 - Host boundary: serialized state/events; no screen, layout, or interaction
-  policy crosses into the engine.
+policy crosses into the engine.
+
+## Topology
+
+Host -> Pincher API -> governed loop -> Decapod/provider adapters -> typed
+events and proof-backed handoff.
+
+## Store Boundaries
+
+Pincher may cache run-local context; Decapod owns durable control-plane state.
 
 ## State ownership
 
@@ -86,6 +118,42 @@ request -> resolve context -> prepare turn -> propose action -> interlock?
 The loop is bounded by cancellation, retry limits, provider timeouts, and
 Decapod approval/validation gates. Parallel work is partitioned by task or
 work unit and must retain explicit custody identifiers.
+
+## Happy Path Sequence
+
+Request -> governed context -> provider turn -> approved action -> validation
+-> proof-backed handoff.
+
+## Error Path
+
+Timeout, interlock, custody conflict, or proof failure remains typed and
+visible to the host with its recovery instruction.
+
+## Execution Path
+
+Ingress, policy/interlock checks, bounded execution, event emission, and
+verification are the required stages.
+
+## Concurrency and Runtime Model
+
+Concurrent work is partitioned by task/work-unit custody and bounded by retry,
+timeout, cancellation, and conflict rules.
+
+## Deployment Topology
+
+Pincher is embedded by a local host; host deployment is outside Pincher's
+responsibility.
+
+## Data and Contracts
+
+The public Rust types and serialized events are the current host contract;
+Decapod owns durable governance data.
+
+## ADR Register
+
+| ADR | Title | Status |
+| --- | --- | --- |
+| ADR-001 | Split loop engine from host UX | Accepted |
 
 ## Delivery cut line
 

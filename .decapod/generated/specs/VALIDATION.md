@@ -11,7 +11,12 @@
   values and verify required identity/custody fields survive the boundary.
 - Exercise blocked interlock, timeout, cancellation, and proof-failure paths.
 - Confirm host-facing docs keep Amnion as a projection and Decapod as the
-  source of governance truth.
+  source of governance truth.## Promotion Gates
+
+- No promotion from a protected branch or outside a Decapod workspace.
+- No completion claim while validation, approval, or proof is unresolved.
+- No interface change without a named producer, consumer, compatibility rule,
+  and migration/removal plan.
 
 <!-- decapod:capability-overlay:background-processing:start -->
 
@@ -68,13 +73,6 @@
 - Rate limit enforcement tests
 - Token expiry/revocation tests
 <!-- decapod:capability-overlay:public-api:end -->
-
-## Promotion Gates
-
-- No promotion from a protected branch or outside a Decapod workspace.
-- No completion claim while validation, approval, or proof is unresolved.
-- No interface change without a named producer, consumer, compatibility rule,
-  and migration/removal plan.
 
 ## Evidence Artifacts
 
