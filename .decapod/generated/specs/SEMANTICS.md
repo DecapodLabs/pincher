@@ -1,49 +1,61 @@
-# Semantics## State Machines
+# Semantics
 
+## State Machines
 ```mermaid
 stateDiagram-v2
-  [*] --> Prepared
-  Prepared --> ContextResolved
-  ContextResolved --> Executing
-  Executing --> AwaitingApproval
-  AwaitingApproval --> Executing: Decapod approval recorded
-  Executing --> Verifying
-  Verifying --> Ready: validation and proof pass
-  Verifying --> Failed: validation or proof fails
-  Executing --> Failed: bounded retry/cancellation/fatal error
-  AwaitingApproval --> Blocked: approval unavailable
-  Ready --> HandedOff
-  Failed --> HandedOff
-  Blocked --> HandedOff
+  [*] --> Draft
+  Draft --> InProgress
+  InProgress --> Verified
+  InProgress --> Blocked
+  Blocked --> InProgress
+  Verified --> [*]
 ```
+
 ## Invariants
+| Invariant | Type | Validation |
+|---|---|---|
+| No promoted change without proof | System | validation gate |
+| Canonical source-of-truth per entity | Data | interface/spec review |
+| Mutation events are replayable | Data | deterministic replay |
 
-| Invariant | Enforcement |
-| --- | --- |
-| No context exposure without the configured governance boundary | Decapod context resolution before the governed prompt |
-| No risky mutation through an unresolved interlock | Decapod approval result is required before continuation |
-| No completion claim without proof | Validation and proof records precede handoff |
-| No host projection becomes authority | Decapod remains source of truth for custody and gates |
-| Retries do not duplicate mutations | Request/correlation and work-unit identity remain attached |
+## Event Sourcing Schema
+| Field | Type | Description |
+|---|---|---|
+| event_id | string | globally unique event id |
+| aggregate_id | string | entity/workflow id |
+| event_type | string | semantic transition |
+| payload | object | transition data |
+| recorded_at | timestamp | append time |
 
-## Determinism
+## Replay Semantics
+- Replay order:
+- Conflict resolution:
+- Snapshot cadence:
+- Determinism proof strategy:
 
-Given the same repository state, intent, governance responses, provider
-response, and retry budget, the loop produces the same state transitions and
-serialized event ordering. Time, ULIDs, and host metadata are evidence fields,
-not decision inputs.
+## Error Code Semantics
+- Namespace:
+- Stable compatibility window:
+- Mapping to retry/degrade behavior:
 
-## Terminal states
+## Domain Rules
+- Business rule 1:
+- Business rule 2:
+- Business rule 3:
 
-- `ready`: execution and required verification passed.
-- `blocked`: a human or Decapod decision is required.
-- `failed`: execution or proof failed with a retained cause.
-- `handed_off`: terminal state and evidence are available to a host.
+## Idempotency Contracts
+| Operation | Idempotency Key | Duplicate Behavior |
+|---|---|---|
+| create/update mutation | request_id | return original result |
+| async enqueue | event_id | ignore duplicate enqueue |
+
+## Language Note
+- Primary language inferred: Rust
 
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9a5d7d51c64c895500d86c3b1bf40b14922d860d7043ed1094c7adf5ea2475fa`
-- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (19 files)
+- Repository signal fingerprint: `c7478e04a9839d0e9dd29d3a9ee8e4f81c3db619326b0d4d20f1b0d6f185059e`
+- Significant implementation surfaces: `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -1,54 +1,86 @@
-# Operations## Run protocol
+# Operations
 
-1. Establish a Decapod session and agent identity.
-2. Bind the request to an explicit todo/work unit and isolated workspace.
-3. Resolve only the context required for the intent.
-4. Execute bounded provider/tool turns and emit meaningful state/events.
-5. Stop for Decapod interlocks and wait for the required approval.
-6. Run validation and record proof before reporting completion.
-7. Hand the terminal state and evidence to the host.## Service Level Objectives
+## Operational Readiness Checklist
+- [ ] On-call ownership defined.
+- [ ] SLOs and alert thresholds defined.
+- [ ] Dashboards for latency/errors/throughput are live.
+- [ ] Runbooks linked for all Sev1/Sev2 alerts.
+- [ ] Rollback plan validated.
+- [ ] Capacity guardrails documented.
 
-The loop remains bounded by provider timeouts, retry budgets, cancellation, and
-Decapod validation. Concrete latency targets are deferred until a real provider
-and host workload exist.
+## Deployment Model
+Describe the operational runtime model, scheduling, and system deployment architecture.
+
+## Service Level Objectives
+| SLI | SLO Target | Measurement Window | Owner |
+|---|---|---|---|
+| Availability | 99.9% | 30d | TBD |
+| P95 latency | TBD | 7d | TBD |
+| Error rate | < 1% | 7d | TBD |
 
 ## Monitoring
+| Signal | Metric | Threshold | Alert |
+|---|---|---|---|
+| Traffic | requests/sec | baseline drift | warn |
+| Latency | p95/p99 | threshold breach | page |
+| Reliability | error ratio | threshold breach | page |
+| Saturation | cpu/memory/queue depth | sustained high | page |
 
-Monitor run id, custody references, event latency, retry count, interlocks,
-validation results, and terminal handoff state.
+## Health Checks
+- Liveness:
+- Readiness:
+- Dependency health:
+- Synthetic transaction:
 
 ## Incident Response
+- Detection:
+- Triage:
+- Mitigation:
+- Communication:
+- Post-mortem:
 
-Stop on scope, custody, approval, or proof anomalies; preserve the failure
-cause and hand off to the host and Decapod operator.
+## Rollout Strategy
+- Blue/green deployment:
+- Canary release:
+- Rolling update:
+- Feature flags:
 
-## Recovery
+## Capacity Planning
+- Traffic patterns:
+- Resource utilization:
+- Scaling triggers:
 
-Transient provider failures may retry within a declared budget. Workspace,
-approval, or validation failures are not hidden by retries. A host may resume
-from the retained Decapod task/work-unit state; it must not reconstruct
-authority from a UI cache.
+## Logging
+Use `tracing` + `tracing-subscriber` with structured JSON output and request correlation ids.
 
-## Observability
+## Secrets Management
+| Secret | Source | Rotation | Consumer |
+|---|---|---|---|
+| External service auth material | managed runtime configuration | periodic | runtime services |
+| Artifact signing material | managed signing service/local secure store | periodic | release pipeline |
 
-Events are structured, correlation-friendly, and safe for a host to render.
-Raw prompts, tokens, and secret-bearing provider payloads must not be emitted
-as ordinary activity. Logs should identify the run and custody references,
-while proof artifacts carry detailed evidence.
+## Security Testing
+| Test Type | Cadence | Tooling |
+|---|---|---|
+| SAST | each PR | language linters/scanners |
+| Dependency scan | each PR + weekly | supply-chain tools |
+| DAST/pentest | scheduled | external/internal |
 
-## Operational ownership
+## Compliance and Audit
+- Regulatory scope:
+- Audit evidence location:
+- Exception process:
 
-- Pincher: loop health, cancellation, retry bounds, event emission, and handoff
-  correctness.
-- Decapod: session custody, approvals, task/workspace state, validation, and
-  promotion evidence.
-- Amnion: presentation, interaction, attention routing, and host-side
-  readability.
+## Pre-Promotion Security Checklist
+- [ ] Threat model updated for changed surfaces.
+- [ ] Auth/authz tests pass.
+- [ ] Dependency vulnerability scan reviewed.
+- [ ] No unresolved critical/high security findings.
 
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9a5d7d51c64c895500d86c3b1bf40b14922d860d7043ed1094c7adf5ea2475fa`
-- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (19 files)
+- Repository signal fingerprint: `c7478e04a9839d0e9dd29d3a9ee8e4f81c3db619326b0d4d20f1b0d6f185059e`
+- Significant implementation surfaces: `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->
