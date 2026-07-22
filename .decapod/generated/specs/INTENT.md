@@ -4,69 +4,118 @@
 
 ## Declared Capability Surfaces
 
-- `event-driven`
-- `external-integrations`
-- `public-api`
+- `agent-loop`
+- `amnion-host-integration`
+- `decapod-trigger-integration`
+- `model-inference`
+- `multi-agent-coordination`
+- `prompt-actor`
+- `prompt-context-construction`
+- `tool-function-calling`
+- `typed-event-emission`
 
 <!-- decapod:declared-capabilities:end -->
 ## Product Outcome
+- Pincher is the complete prompt actor and agent runtime between Amnion and Decapod. Amnion accepts user intent through chat and presents Pincher events; Pincher constructs prompts and context, runs inference and the agent loop, invokes tools, coordinates execution, and automatically triggers Decapod governance; Decapod is a governed control-plane dependency rather than Pincher’s whole purpose.
 
-Pincher is the Rust-first governed loop engine for agent work in explicitly
-allowed repositories. It prepares Decapod-governed context, runs provider
-turns, coordinates work units, stops at approval interlocks, emits typed
-runtime state/events, and records proof-backed handoff state.
+## What This Project Is
+pincher is a service_or_library project built using Rust.
+Pincher is the complete prompt actor and agent runtime between Amnion and Decapod. Amnion accepts user intent through chat and presents Pincher events; Pincher constructs prompts and context, runs inference and the agent loop, invokes tools, coordinates execution, and automatically triggers Decapod governance; Decapod is a governed control-plane dependency rather than Pincher’s whole purpose.
+
+Key operating facts:
+- **Primary languages**: Rust
+- **Detected surfaces**: Amnion, Decapod, Pincher
+
+## Product View
+```mermaid
+flowchart LR
+  U[Primary User] --> P[pincher]
+  P --> O[User-visible Outcome]
+  P --> G[Proof Gates]
+  G --> E[Evidence Artifacts]
+```
+
+## Inferred Baseline
+- Repository: pincher
+- Product type: service_or_library
+- Primary languages: Rust
+- Detected surfaces: Amnion, Decapod, Pincher
 
 ## Scope
+| Area | In Scope | Proof Surface |
+|---|---|---|
+| Core workflow | Define a concrete user-visible workflow | Acceptance criteria + tests |
+| Data contracts | Document canonical inputs/outputs | [INTERFACES.md](./INTERFACES.md) and schema checks |
+| Delivery quality | Block promotion on broken proof surfaces | [VALIDATION.md](./VALIDATION.md) blocking gates |
 
-| Area | Pincher owns | Source of truth |
-| --- | --- | --- |
-| Execution | Loop lifecycle, provider turn orchestration, retries, cancellation, and coordination | Pincher runtime |
-| Governance integration | Context resolution, sessions, todos, workspaces, work units, approvals, validation, and proofs through Decapod | Decapod |
-| Host contract | Typed state and event output suitable for a host renderer | Pincher interfaces |
-| Presentation | Terminal layout, conversation UX, status views, and human-attention policy | Amnion |
-
-## Explicit non-goals
-
-- Pincher does not implement a TUI, webapp, SaaS screen, or conversation
-  presentation layer.
-- Pincher does not replace Decapod's durable state, approval records, or
-  promotion gates with a parallel store.
-- Pincher does not claim provider or human identity from environment values;
-  local Decapod session custody is not provider authentication.
+## Non-Goals (Falsifiable)
+| Non-goal | How to falsify |
+|---|---|
+| Feature creep beyond the primary outcome | Any PR adds capability not tied to outcome criteria |
+| Shipping without evidence | Missing validation artifacts for promoted changes |
+| Ambiguous ownership boundaries | Missing owner/system-of-record in interfaces |
 
 ## Constraints
+- Technical: runtime, dependency, and topology boundaries are explicit.
+- Operational: deployment, rollback, and incident ownership are defined.
+- Security/compliance: sensitive data handling and authz are mandatory.
 
-- Rust-first library/runtime with no UI ownership.
-- Mutations require Decapod session, task/work-unit scope, and isolated workspace custody.
-- Decapod remains the authority for approvals, durable state, validation, and promotion.
+## Acceptance Criteria (must be objectively testable)
+- [ ] A human submits supported intent through Amnion chat; Amnion automatically passes that intent to Pincher; Pincher deterministically constructs prompts and context, runs the complete agent loop with model inference and tool calls, coordinates state and emits typed events for Amnion to present, and automatically invokes Decapod for governed triggers, validation, approvals, repository actions, and proof recording. Completion is auditable from user intent through Pincher execution to Decapod governance and back to the Amnion-visible event stream.
+- [ ] Non-functional targets are met (latency, reliability, cost, etc.).
+- [ ] Validation gates pass and artifacts are attached.
+- [ ] `cargo test` passes for unit/integration coverage
+- [ ] `cargo clippy -- -D warnings` passes with no denied lints
+- [ ] `cargo fmt --check` passes on the repo
 
-## Acceptance Criteria
+## Epistemic Custody Fields
 
-- [ ] A host can start a governed run without importing UI policy into Pincher.
-- [ ] Context exposure and execution are bound to a Decapod session and
-      explicit task/work-unit/workspace scope.
-- [ ] Blocking interlocks stop execution until the required Decapod approval is
-      present.
-- [ ] Runtime state and events identify the run, session, task/work unit, and
-      current lifecycle state so Amnion can render them.
-- [ ] Completion requires validation and named proof evidence; failures retain
-      their cause for handoff.
-- [ ] `cargo fmt --check`, `cargo test`, `cargo clippy -- -D warnings`, and
-      `decapod validate` are recorded as proof surfaces.
+### Active Assumptions
+- [ ] List any assumptions made to proceed.
+- [ ] Flag assumptions that require future verification.
 
-## Assumptions and deferred decisions
+### Confidence & Risk Level
+- **Confidence**: Low/Medium/High (Rationale: )
+- **Risk**: Low/Medium/High (Impact of wrong assumptions: )
 
-- The first host is Amnion, but the host contract remains reusable.
-- Provider and tool adapters are extension points; the current model call is a
-  deterministic placeholder rather than a shipped provider implementation.
-- The exact versioned host transport is deferred until a concrete Amnion
-  consumer exists; current Rust types and serialized events are the evidence
-  surface.
+### Measured vs Inferred Facts
+| Fact | Source (Provenance) | Type (Measured/Inferred) |
+|---|---|---|
+| | | |
+
+### Unresolved Contradictions
+- [ ] List any evidence that conflicts with current assumptions or intent.
+
+### Deferred Questions
+- [ ] Questions to be answered later.
+
+### Stop Conditions
+- [ ] Explicit conditions under which the agent should stop and ask for help.
+
+### Proof Required Before Completion
+- [ ] Specific evidence needed to prove the outcome is met.
+
+## Tradeoffs Register
+| Decision | Benefit | Cost | Review Trigger |
+|---|---|---|---|
+| Simplicity vs extensibility | Faster iteration | Potential rework | Feature set expands |
+| Strict gates vs dev speed | Higher confidence | More upfront discipline | Lead time regressions |
+
+## First Implementation Slice
+- [ ] Define the smallest user-visible workflow to ship first.
+- [ ] Define required data/contracts for that workflow.
+- [ ] Define what is intentionally postponed until v2.
+
+## Open Questions (with decision deadlines)
+| Question | Owner | Deadline | Decision |
+|---|---|---|---|
+| Which interfaces are versioned at launch? | TBD | YYYY-MM-DD | |
+| Which non-functional target is hardest to hit? | TBD | YYYY-MM-DD | |
 
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9a5d7d51c64c895500d86c3b1bf40b14922d860d7043ed1094c7adf5ea2475fa`
-- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (19 files)
+- Repository signal fingerprint: `c7478e04a9839d0e9dd29d3a9ee8e4f81c3db619326b0d4d20f1b0d6f185059e`
+- Significant implementation surfaces: `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->
