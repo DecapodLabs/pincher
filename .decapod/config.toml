@@ -2,8 +2,8 @@ schema_version = "1.0.0"
 
 [init]
 specs = true
-ci = true
-diagram_style = "mermaid"
+ci = false
+diagram_style = "ascii"
 entrypoints = [
     "AGENTS.md",
     "CLAUDE.md",
@@ -13,13 +13,19 @@ entrypoints = [
 
 [repo]
 product_name = "pincher"
-product_summary = "Pincher is the governed Rust loop engine. It requires Decapod custody and governed context before inference, emits a versioned host contract, and requires authoritative Decapod validation and proof before readiness."
-architecture_direction = "Pincher is a Rust library/runtime. Amnion owns the soft terminal UI/UX; Pincher owns the governed inference and execution loop; Decapod owns authoritative repository custody, approvals, validation, proof, and promotion state."
+product_summary = "Pincher is the complete prompt actor and agent runtime between Amnion and Decapod. Amnion accepts user intent through chat and presents Pincher events; Pincher constructs prompts and context, runs inference and the agent loop, invokes tools, coordinates execution, and automatically triggers Decapod governance; Decapod is a governed control-plane dependency rather than Pincher’s whole purpose."
+architecture_direction = "Pincher is the Rust-first prompt actor and complete agent runtime between Amnion and Decapod. Amnion is the user-facing host: it accepts chat intent and presents Pincher events. Pincher owns prompt and context construction, model API orchestration, inference, tool and function calling, the agent loop, patch planning and application, typed state and event emission, deterministic request/retry/idempotency envelopes, multi-agent coordination, and automatic Decapod trigger and RPC integration. Decapod is a governed control-plane dependency that validates, authorizes, and records Pincher actions; Pincher is not merely a Decapod client. Keep Amnion’s UI and transport concerns thin while keeping governance decisions in Decapod."
 product_type = "service_or_library"
-done_criteria = "For governed-run contract v1, a host can construct a versioned RunRequest with explicit Decapod session, task, work-unit, repository, and isolated workspace references; the engine resolves authoritative custody and governed context before invoking a ProviderTurn; typed interlock, approval, failure, and event envelopes preserve the run outcome; and Ready is impossible without successful Decapod validation and proof evidence references. Amnion renders the resulting host contract, while Decapod remains the authority. Real providers, tools, patch application, transports, persistence, recovery, and promotion remain deferred until separately proven."
+done_criteria = "A human submits supported intent through Amnion chat; Amnion automatically passes that intent to Pincher; Pincher deterministically constructs prompts and context, runs the complete agent loop with model inference and tool calls, coordinates state and emits typed events for Amnion to present, and automatically invokes Decapod for governed triggers, validation, approvals, repository actions, and proof recording. Completion is auditable from user intent through Pincher execution to Decapod governance and back to the Amnion-visible event stream."
 base_branch = "main"
-primary_languages = ["Rust"]
+primary_languages = [
+    "Rust",
+    "rust",
+]
 detected_surfaces = [
+    "Amnion",
+    "Decapod",
+    "Pincher",
     "cargo",
     "rust",
 ]
@@ -27,7 +33,29 @@ external_tracker = false
 container_workspaces = true
 mode = "local"
 declared_capabilities = [
-    "event-driven",
-    "external-integrations",
-    "public-api",
+    "agent-loop",
+    "amnion-host-integration",
+    "decapod-trigger-integration",
+    "model-inference",
+    "multi-agent-coordination",
+    "prompt-actor",
+    "prompt-context-construction",
+    "tool-function-calling",
+    "typed-event-emission",
 ]
+
+[governance]
+protected_paths = []
+approval_categories = ["destructive_operations"]
+
+[proof]
+commands = []
+
+[custody]
+isolation = "container"
+
+[tracker]
+provider = "decapod"
+
+[context]
+declared_sources = []
