@@ -1,24 +1,50 @@
-# Pincher project specs
+# Project Specs
 
-These living specs define Pincher as the governed loop engine. They are the
-contract between Pincher, Decapod, and host applications such as Amnion.
+Canonical path: `.decapod/generated/specs/`.
+These files are the project-local contract for humans and agents.
 
-- `INTENT.md` defines the engine boundary and acceptance criteria.
-- `ARCHITECTURE.md` defines the loop, custody, and state ownership model.
-- `INTERFACES.md` defines host-facing state/events and Decapod adapters.
-- `SEMANTICS.md` defines lifecycle transitions and invariants.
-- `OPERATIONS.md` defines execution, recovery, and handoff behavior.
-- `SECURITY.md` defines trust boundaries and sensitive-data handling.
-- `VALIDATION.md` defines the proof commands and promotion evidence.
+## Snapshot
+- Project: this repository
+- Outcome: Define the intended user-visible outcome.
+- Detected languages: not detected yet
+- Detected surfaces: not detected yet
 
-Amnion owns presentation and human interaction. Decapod owns governance truth,
-approvals, durable task state, and promotion gates. Pincher must not duplicate
-either boundary.
+## How to use this folder
+- [INTENT.md](./INTENT.md): what success means and what is explicitly out of scope.
+- [ARCHITECTURE.md](./ARCHITECTURE.md): topology, runtime model, data boundaries, and ADR trail.
+- [INTERFACES.md](./INTERFACES.md): API/CLI/events/storage contracts and failure behavior.
+- [VALIDATION.md](./VALIDATION.md): proof commands, quality gates, and evidence artifacts.
+- [SEMANTICS.md](./SEMANTICS.md): state machines, invariants, replay rules, and idempotency.
+- [OPERATIONS.md](./OPERATIONS.md): SLOs, monitoring, incident response, and rollout strategy.
+- [SECURITY.md](./SECURITY.md): threat model, trust boundaries, auth/authz, and supply-chain posture.
+
+## Canonical `.decapod/` Layout
+- `.decapod/data/`: canonical control-plane state (SQLite + ledgers).
+- `.decapod/generated/specs/`: **Living project specs** for humans and agents.
+- `.decapod/generated/context/`: deterministic context capsules.
+- `.decapod/generated/policy/context_capsule_policy.json`: repo-native JIT context policy contract.
+- `.decapod/generated/artifacts/provenance/`: promotion manifests and convergence checklist.
+- `.decapod/generated/artifacts/custody/`: epistemic custody artifacts (assumptions, contradictions, deferred questions).
+- `.decapod/generated/artifacts/inventory/`: deterministic release inventory.
+- `.decapod/generated/artifacts/diagnostics/`: opt-in diagnostics artifacts.
+- `.decapod/workspaces/`: isolated todo-scoped git worktrees.
+
+## Day-0 Onboarding Checklist
+- [ ] Replace all placeholders in all 8 spec files.
+- [ ] Confirm primary user outcome and acceptance criteria in [INTENT.md](./INTENT.md).
+- [ ] Confirm topology and runtime model in [ARCHITECTURE.md](./ARCHITECTURE.md).
+- [ ] Document all inbound/outbound contracts in [INTERFACES.md](./INTERFACES.md).
+- [ ] Define validation gates and CI proof surfaces in [VALIDATION.md](./VALIDATION.md).
+- [ ] Define state machines and invariants in [SEMANTICS.md](./SEMANTICS.md).
+- [ ] Define SLOs, alerting, and incident process in [OPERATIONS.md](./OPERATIONS.md).
+- [ ] Define threat model and auth/authz decisions in [SECURITY.md](./SECURITY.md).
+- [ ] Ensure architecture diagram, docs, changelog, and tests are mapped to promotion gates.
+- [ ] Run all validation/test commands and attach evidence artifacts.
 
 <!-- decapod:codebase-attestation:start -->
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9a5d7d51c64c895500d86c3b1bf40b14922d860d7043ed1094c7adf5ea2475fa`
-- Significant implementation surfaces: `.github/` (1 files), `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (19 files)
+- Repository signal fingerprint: `c7478e04a9839d0e9dd29d3a9ee8e4f81c3db619326b0d4d20f1b0d6f185059e`
+- Significant implementation surfaces: `Cargo.lock/` (1 files), `Cargo.toml/` (1 files), `README.md/` (1 files), `src/` (18 files)
 - Refreshed from the current codebase by `decapod specs.refresh`
 <!-- decapod:codebase-attestation:end -->
